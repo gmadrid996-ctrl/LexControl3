@@ -1,0 +1,7 @@
+LexControl 2.9 - PROYECTO FUENTE ANDROID, NO ES UNA APK
+
+Incluye interfaz 2.8 con adjuntos PDF, Word, Excel y fotos; selector de archivos nativo en WebView; programación de alertas de audiencia y lectura de voz mediante TextToSpeech.
+
+IMPORTANTE: No compilado ni probado en dispositivo. Las voces disponibles dependen del motor TTS de Android: no se garantiza voz femenina. Android puede restringir la ejecución en segundo plano y la puntualidad de alarmas. El almacenamiento local de WebView no es un repositorio seguro para expedientes confidenciales. Requiere auditoría de seguridad, cifrado y copias de seguridad antes de uso profesional.
+
+Para compilar: abrir como proyecto Gradle Android en Android Studio con Android SDK 35 y ejecutar Build > Build APK(s). El ZIP NO se instala como APK.

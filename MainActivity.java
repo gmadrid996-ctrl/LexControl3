@@ -1,0 +1,14 @@
+package pe.lexcontrol.local;
+import android.app.*;import android.os.*;import android.content.*;import android.webkit.*;import android.view.*;import android.widget.*;
+public class MainActivity extends Activity {
+ WebView web; ValueCallback<android.net.Uri[]> fileCallback; static final int PICK_FILES=201;
+ @Override public void onCreate(Bundle b){super.onCreate(b);getWindow().setStatusBarColor(0xff174a8b);getWindow().setNavigationBarColor(0xff174a8b);
+  if(Build.VERSION.SDK_INT>=33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS")!=android.content.pm.PackageManager.PERMISSION_GRANTED)requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},11);
+  web=new WebView(this);setContentView(web);web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(true);
+  web.addJavascriptInterface(new Object(){@JavascriptInterface public void sync(String json){getSharedPreferences("alerts",0).edit().putString("data",json).apply();AlertScheduler.schedule(MainActivity.this,json);}},"AndroidAlerts");
+  web.setWebChromeClient(new WebChromeClient(){@Override public boolean onShowFileChooser(WebView v,ValueCallback<android.net.Uri[]> cb,FileChooserParams params){if(fileCallback!=null)fileCallback.onReceiveValue(null);fileCallback=cb;try{Intent picker=new Intent(Intent.ACTION_GET_CONTENT);picker.setType("*/*");picker.addCategory(Intent.CATEGORY_OPENABLE);picker.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);startActivityForResult(Intent.createChooser(picker,"Seleccionar documentos"),PICK_FILES);return true;}catch(Exception ex){fileCallback=null;return false;}}});
+  web.setWebViewClient(new WebViewClient(){@Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest r){String url=r.getUrl().toString();if(url.startsWith("https://wa.me/")||url.startsWith("https://api.whatsapp.com/")){try{startActivity(new Intent(Intent.ACTION_VIEW,r.getUrl()));}catch(Exception ex){Toast.makeText(MainActivity.this,"No se pudo abrir WhatsApp",Toast.LENGTH_SHORT).show();}return true;}return !url.startsWith("file:///android_asset/");}});
+  web.loadUrl("file:///android_asset/index.html"); }
+ @Override protected void onActivityResult(int request,int result,Intent intent){super.onActivityResult(request,result,intent);if(request!=PICK_FILES||fileCallback==null)return;android.net.Uri[] uris=null;if(result==RESULT_OK&&intent!=null){if(intent.getClipData()!=null){int n=intent.getClipData().getItemCount();uris=new android.net.Uri[n];for(int j=0;j<n;j++)uris[j]=intent.getClipData().getItemAt(j).getUri();}else if(intent.getData()!=null)uris=new android.net.Uri[]{intent.getData()};}fileCallback.onReceiveValue(uris);fileCallback=null;}
+ @Override public void onBackPressed(){web.evaluateJavascript("if(typeof go==='function'){go('panel')}",null);}
+}

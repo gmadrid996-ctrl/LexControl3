@@ -1,0 +1,1 @@
+Subir el CONTENIDO de esta carpeta a la raiz del repositorio GitHub. Ir a Actions > Crear APK LexControl > Run workflow. Al finalizar descargar LexControl-APK en Artifacts. Este es un proyecto sin compilar; las funciones de alertas deben probarse en un telefono real.
